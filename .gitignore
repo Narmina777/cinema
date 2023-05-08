@@ -1,32 +1,64 @@
-# Prerequisites
-*.d
+using CinemaService.Models;
+using CinemaService.Models.CinemaService.Hasthags;
+using CinemaService.Reposiries;
+using Microsoft.AspNetCore.Mvc;
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+namespace CinemaService.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class HasthagController : ControllerBase
+    {
+        private readonly HasthagsRepository _hasthagRepository = new HasthagsRepository();
+        [HttpPost]
+        public IActionResult AddHasthag(Hasthags request)
+        {
+            var result = _hasthagRepository.AddHasthags(request);
+            if (result)
+            {
+                return StatusCode(StatusCodes.Status201Created);
+            }
 
-# Precompiled Headers
-*.gch
-*.pch
+            return BadRequest();
+        }
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+        [HttpPut]
+        public IActionResult UpdateHasthags([FromQuery] int id, [FromQuery] string text)
+        {
+            var result = _hasthagRepository.UpdateHasthags(id, text);
+            if (result)
+            {
+                return Ok();
+            }
 
-# Fortran module files
-*.mod
-*.smod
+            return BadRequest();
+        }
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+        [HttpGet("{Id}")]
+        public IActionResult GetHasthagsById(int Id)
+        {
+            var result = _hasthagRepository.GetHasthagsById(Id);
+            return Ok(result);
 
-# Executables
-*.exe
-*.out
-*.app
+        }
+        [HttpGet("GetAll")]
+        public IActionResult GetAllComments()
+        {
+            var result = _hasthagRepository.GetAllHasthags();
+            return Ok(result);
+
+        }
+
+        [HttpDelete("{Id}")]
+        public IActionResult DeleteHasthags(int Id)
+        {
+            var result = _hasthagRepository.DeleteHasthags(Id);
+
+            if (result)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
+    }
+}
